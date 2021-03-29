@@ -47,7 +47,7 @@ runs:
 
         $VENV_ACTIVATE
         # Always upgrade pip and wheels
-        pip install -U pip wheel --user
+        python -m pip install --upgrade pip wheel
 
         pip --version
 
