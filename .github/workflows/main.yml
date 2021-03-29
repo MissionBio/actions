@@ -1,0 +1,56 @@
+on: [push]
+
+jobs:
+  hello_world_job:
+    name: Test release builder
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [macos-latest, windows-latest, ubuntu-latest]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Setup Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.8.8'
+          architecture: 'x64'
+
+      - name: Setup Node
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+
+      - name: Build release(s)
+        uses: ./ # Uses an action in the root directory
+        with:
+          source_path: .
+          electron_path: .
+
+      - name: Product
+        run: |
+          echo $SYSTEM_NAME
+          echo $PRODUCT_VERSION
+          echo $PRODUCT_OS_AND_VERSION
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: ${{ env.PRODUCT_OS_AND_VERSION }}-runtime.zip
+          path: ${{ github.workspace }}/runtime.zip
+          if-no-files-found: ignore
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: ${{ env.PRODUCT_OS_AND_VERSION }}-release.zip
+          path: ${{ github.workspace }}/release.zip
+          if-no-files-found: ignore
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: ${{ env.PRODUCT_OS_AND_VERSION }}-release.dmg
+          path: ${{ github.workspace }}/release.dmg
+          if-no-files-found: ignore

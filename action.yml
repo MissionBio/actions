@@ -1,0 +1,86 @@
+name: Release builder
+description: Github Action to build the releases
+inputs:
+  source_path:
+    description: Location of source code
+    required: true
+    default: .
+  build_path:
+    description: Build location
+    required: true
+    default: .
+  build_script:
+    description: Build script
+    required: true
+    default: pyinstaller app.py
+  electron_path:
+    description: Location of Electron source code
+    required: true
+    default: .
+runs:
+  using: "composite"
+  steps:
+    - name: Setup system name and virtualenv vars
+      shell: bash
+      run: |
+        SYSTEM_NAME=$(echo "$RUNNER_OS" | tr '[:upper:]' '[:lower:]')
+        echo "SYSTEM_NAME=$SYSTEM_NAME" >> $GITHUB_ENV
+
+        if [ $SYSTEM_NAME = "windows" ]; then
+          echo "VENV_ACTIVATE=source ./venv/Scripts/activate" >> $GITHUB_ENV
+        else
+          echo "VENV_ACTIVATE=source ./venv/bin/activate" >> $GITHUB_ENV
+        fi
+
+    - name: Product Version
+      shell: bash
+      run: |
+        VERSION=$(git describe --tags)
+        echo "PRODUCT_VERSION=$VERSION" >> $GITHUB_ENV
+        echo "PRODUCT_OS_AND_VERSION=$SYSTEM_NAME-$VERSION" >> $GITHUB_ENV
+
+    - name: Build the app and bundle w/ PyInstaller
+      shell: bash
+      run: |
+        cd ${{ inputs.source_path }}
+        python -m venv venv
+
+        $VENV_ACTIVATE
+
+        REQUIREMENTS=$SYSTEM_NAME-requirements.txt
+        if [ -f "$REQUIREMENTS" ]; then
+          echo "$REQUIREMENTS exists."
+          pip install -r $REQUIREMENTS
+        else 
+          echo "$REQUIREMENTS does not exist."
+          pip install -r requirements.txt
+        fi
+
+        cd ${{ inputs.build_path }}
+        ${{ inputs.build_script }}
+
+        7z a -r -tzip $GITHUB_WORKSPACE/runtime.zip dist
+
+    - name: Build the Electron app
+      shell: bash
+      run: |
+        cp -r ${{ inputs.build_path }}/dist/* ${{ inputs.electron_path }}
+        cd ${{ inputs.electron_path }}
+        yarn install && yarn run make
+
+        ZIP_OUTPUT=$(find out/make/ -name "*.zip")
+        DMG_OUTPUT=$(find out/make/ -name "*.dmg")
+
+        if [ -f "$ZIP_OUTPUT" ]; then
+          echo "$ZIP_OUTPUT exists."
+          cp $ZIP_OUTPUT $GITHUB_WORKSPACE/release.zip
+        else
+          echo "Not found: $ZIP_OUTPUT"
+        fi
+
+        if [ -f "$DMG_OUTPUT" ]; then
+          echo "$DMG_OUTPUT exists."
+          cp $DMG_OUTPUT $GITHUB_WORKSPACE/release.dmg
+        else
+          echo "Not found: $DMG_OUTPUT"
+        fi
