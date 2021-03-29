@@ -47,7 +47,9 @@ runs:
 
         $VENV_ACTIVATE
         # Always upgrade pip and wheels
-        pip install -U pip wheel
+        pip install -U pip wheel --user
+
+        pip --version
 
         REQUIREMENTS=$SYSTEM_NAME-requirements.txt
         if [ -f "$REQUIREMENTS" ]; then
