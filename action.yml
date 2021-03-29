@@ -35,7 +35,7 @@ runs:
     - name: Product Version
       shell: bash
       run: |
-        VERSION=$(git describe --tags)
+        VERSION=$(git describe --tags --always)
         echo "PRODUCT_VERSION=$VERSION" >> $GITHUB_ENV
         echo "PRODUCT_OS_AND_VERSION=$SYSTEM_NAME-$VERSION" >> $GITHUB_ENV
 
