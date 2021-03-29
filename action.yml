@@ -46,6 +46,8 @@ runs:
         python -m venv venv
 
         $VENV_ACTIVATE
+        # Always upgrade pip and wheels
+        pip install -U pip wheel
 
         REQUIREMENTS=$SYSTEM_NAME-requirements.txt
         if [ -f "$REQUIREMENTS" ]; then
