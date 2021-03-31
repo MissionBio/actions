@@ -11,8 +11,7 @@ inputs:
     default: .
   build_script:
     description: Build script
-    required: true
-    default: pyinstaller app.py
+    required: false
   electron_path:
     description: Location of Electron source code
     required: true
@@ -28,8 +27,14 @@ runs:
 
         if [ $SYSTEM_NAME = "windows" ]; then
           echo "VENV_ACTIVATE=source ./venv/Scripts/activate" >> $GITHUB_ENV
+          echo "BUILD_SCRIPT=build.ps1" >> $GITHUB_ENV
         else
           echo "VENV_ACTIVATE=source ./venv/bin/activate" >> $GITHUB_ENV
+          echo "BUILD_SCRIPT=build.sh" >> $GITHUB_ENV
+        fi
+
+        if [ -n "${{ inputs.build_script }}" ]; then
+          echo "BUILD_SCRIPT=${{ inputs.build_script }}" >> $GITHUB_ENV
         fi
 
     - name: Product Version
@@ -61,7 +66,7 @@ runs:
         fi
 
         cd ${{ inputs.build_path }}
-        ${{ inputs.build_script }}
+        ./$BUILD_SCRIPT
 
         7z a -r -tzip $GITHUB_WORKSPACE/runtime.zip dist
 
