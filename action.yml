@@ -24,13 +24,12 @@ runs:
       run: |
         SYSTEM_NAME=$(echo "$RUNNER_OS" | tr '[:upper:]' '[:lower:]')
         echo "SYSTEM_NAME=$SYSTEM_NAME" >> $GITHUB_ENV
+        echo "BUILD_SCRIPT=build-$SYSTEM_NAME.sh" >> $GITHUB_ENV
 
         if [ $SYSTEM_NAME = "windows" ]; then
           echo "VENV_ACTIVATE=source ./venv/Scripts/activate" >> $GITHUB_ENV
-          echo "BUILD_SCRIPT=build.ps1" >> $GITHUB_ENV
         else
           echo "VENV_ACTIVATE=source ./venv/bin/activate" >> $GITHUB_ENV
-          echo "BUILD_SCRIPT=build.sh" >> $GITHUB_ENV
         fi
 
         if [ -n "${{ inputs.build_script }}" ]; then
