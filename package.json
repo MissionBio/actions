@@ -10,7 +10,10 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
-  "author": "",
+  "author": {
+    "name": "Aljosa Mohorovic",
+    "email": "mohorovic@missionbio.com"
+  },
   "config": {
     "forge": {
       "packagerConfig": {},
