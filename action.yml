@@ -96,7 +96,7 @@ runs:
 
         if [ -f "$EXE_OUTPUT" ]; then
           echo "$EXE_OUTPUT exists."
-          cp $EXE_OUTPUT $GITHUB_WORKSPACE/release.exe
+          cp "$EXE_OUTPUT" $GITHUB_WORKSPACE/release.exe
         else
           echo "Not found: $EXE_OUTPUT"
         fi
