@@ -78,6 +78,7 @@ runs:
 
         ZIP_OUTPUT=$(find out/make/ -name "*.zip")
         DMG_OUTPUT=$(find out/make/ -name "*.dmg")
+        EXE_OUTPUT=$(find out/make/ -name "*Setup.exe")
 
         if [ -f "$ZIP_OUTPUT" ]; then
           echo "$ZIP_OUTPUT exists."
@@ -91,4 +92,11 @@ runs:
           cp $DMG_OUTPUT $GITHUB_WORKSPACE/release.dmg
         else
           echo "Not found: $DMG_OUTPUT"
+        fi
+
+        if [ -f "$EXE_OUTPUT" ]; then
+          echo "$EXE_OUTPUT exists."
+          cp $EXE_OUTPUT $GITHUB_WORKSPACE/release.exe
+        else
+          echo "Not found: $EXE_OUTPUT"
         fi
