@@ -1,7 +1,7 @@
 {
   "name": "release-builder",
   "version": "0.0.1",
-  "description": "",
+  "description": "Github Actions required to build pyinstaller/electron based releases",
   "main": "main.js",
   "scripts": {
     "start": "electron-forge start",
