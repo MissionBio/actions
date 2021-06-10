@@ -82,14 +82,14 @@ runs:
 
         if [ -f "$ZIP_OUTPUT" ]; then
           echo "$ZIP_OUTPUT exists."
-          cp $ZIP_OUTPUT $GITHUB_WORKSPACE/release.zip
+          cp "$ZIP_OUTPUT" $GITHUB_WORKSPACE/release.zip
         else
           echo "Not found: $ZIP_OUTPUT"
         fi
 
         if [ -f "$DMG_OUTPUT" ]; then
           echo "$DMG_OUTPUT exists."
-          cp $DMG_OUTPUT $GITHUB_WORKSPACE/release.dmg
+          cp "$DMG_OUTPUT" $GITHUB_WORKSPACE/release.dmg
         else
           echo "Not found: $DMG_OUTPUT"
         fi
